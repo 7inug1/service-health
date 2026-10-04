@@ -6,7 +6,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # 상태 페이지 기록(docs/history.json)을 커밋
+
+concurrency: daily-check
 
 jobs:
   check:
@@ -19,8 +21,21 @@ jobs:
           node-version: 20
       - run: npm test
       - name: 서비스 점검
+        id: check
+        continue-on-error: true # 실패해도 기록은 남기고, 마지막 단계에서 실패 처리
         env:
           ANTHROPIC_API_KEY_DIGESTUBE: ${{ secrets.ANTHROPIC_API_KEY_DIGESTUBE }}
           ANTHROPIC_API_KEY_VIZUDEN: ${{ secrets.ANTHROPIC_API_KEY_VIZUDEN }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         run: npm run check
+      - name: 상태 페이지 기록
+        run: |
+          node record.mjs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/history.json
+          git diff --cached --quiet || git commit -m "chore: 점검 결과 기록"
+          git push
+      - name: 실패 알림
+        if: steps.check.outcome == 'failure'
+        run: exit 1 # 실패로 끝내야 GitHub 가 메일을 보낸다

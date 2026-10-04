@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>서비스 상태</title>
+<style>
+:root { --bg:#f7f7f5; --card:#fff; --ink:#111; --muted:#6b6b6b; --line:#e4e4e0; --ok:#2e9e5b; --bad:#d64545; --none:#d9d9d4; }
+@media (prefers-color-scheme: dark) { :root { --bg:#121212; --card:#1c1c1c; --ink:#eee; --muted:#9a9a9a; --line:#2c2c2c; --none:#333; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", sans-serif; }
+main { max-width:760px; margin:0 auto; padding:32px 16px 48px; }
+h1 { font-size:22px; margin:0 0 4px; }
+.sub { color:var(--muted); margin:0 0 20px; font-size:13px; }
+.banner { padding:14px 16px; border-radius:10px; font-weight:600; margin-bottom:20px; color:#fff; }
+.banner.ok { background:var(--ok); } .banner.bad { background:var(--bad); }
+h2 { font-size:14px; color:var(--muted); margin:24px 0 8px; font-weight:600; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.row { display:flex; align-items:center; gap:12px; padding:12px 14px; border-top:1px solid var(--line); }
+.row:first-child { border-top:0; }
+.dot { width:10px; height:10px; border-radius:50%; flex:none; }
+.name { flex:1; min-width:0; }
+.bars { display:flex; gap:2px; flex:none; }
+.bar { width:5px; height:20px; border-radius:2px; background:var(--none); }
+.ok { background:var(--ok); } .bad { background:var(--bad); }
+.legend { color:var(--muted); font-size:12px; margin-top:16px; }
+@media (max-width:520px) { .bar { width:3px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>서비스 상태</h1>
+  <p class="sub" id="sub">불러오는 중…</p>
+  <div id="banner"></div>
+  <div id="groups"></div>
+  <p class="legend">매일 09:00(KST) 자동 점검 · 막대는 최근 30일(오른쪽이 최신), 회색은 기록 없음</p>
+</main>
+<script>
+fetch("history.json", { cache: "no-store" }).then(r => r.json()).then(history => {
+  const sub = document.getElementById("sub");
+  if (!history.length) { sub.textContent = "아직 기록이 없습니다."; return; }
+  const latest = history[0];
+  const down = latest.checks.filter(c => !c.ok).length;
+  sub.textContent = `마지막 점검: ${latest.date}`;
+  const banner = document.getElementById("banner");
+  banner.className = "banner " + (down ? "bad" : "ok");
+  banner.textContent = down ? `고장 ${down}개` : "모두 정상";
+
+  const days = [...history].reverse(); // 왼쪽이 오래된 날
+  const groups = {};
+  for (const c of latest.checks) {
+    const [service, part] = c.name.split(" · ");
+    (groups[service] ??= []).push({ name: part ?? c.name, full: c.name, ok: c.ok });
+  }
+  const root = document.getElementById("groups");
+  for (const [service, items] of Object.entries(groups)) {
+    const h = document.createElement("h2"); h.textContent = service; root.append(h);
+    const card = document.createElement("div"); card.className = "card";
+    for (const it of items) {
+      const row = document.createElement("div"); row.className = "row";
+      const dot = document.createElement("span"); dot.className = "dot " + (it.ok ? "ok" : "bad");
+      const name = document.createElement("span"); name.className = "name"; name.textContent = it.name;
+      const bars = document.createElement("span"); bars.className = "bars";
+      for (let i = 0; i < 30 - days.length; i++) bars.append(Object.assign(document.createElement("span"), { className: "bar" }));
+      for (const d of days) {
+        const c = d.checks.find(x => x.name === it.full);
+        const b = document.createElement("span");
+        b.className = "bar" + (c ? (c.ok ? " ok" : " bad") : "");
+        b.title = `${d.date} ${c ? (c.ok ? "정상" : "고장") : "기록 없음"}`;
+        bars.append(b);
+      }
+      row.append(dot, name, bars); card.append(row);
+    }
+    root.append(card);
+  }
+}).catch(() => { document.getElementById("sub").textContent = "기록을 불러오지 못했습니다."; });
+</script>
+</body>
+</html>
