@@ -1,0 +1,26 @@
+name: daily-check
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 매일 09:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm test
+      - name: 서비스 점검
+        env:
+          ANTHROPIC_API_KEY_DIGESTUBE: ${{ secrets.ANTHROPIC_API_KEY_DIGESTUBE }}
+          ANTHROPIC_API_KEY_VIZUDEN: ${{ secrets.ANTHROPIC_API_KEY_VIZUDEN }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: npm run check
