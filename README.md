@@ -1,7 +1,10 @@
 # service-health
 
 Digestube·VIZUDEN·포트폴리오 사이트를 매일 09:00(KST)에 점검하는 비공개 저장소.
-하나라도 실패하면 GitHub Actions 실패 메일이 온다. 결과 표는 실행 기록의 Summary 에 남는다.
+하나라도 실패하면 GitHub Actions 실패 메일이 온다.
+
+- 상태 페이지: https://7inug1.github.io/service-health/ (항목별 정상·고장, 최근 30일)
+- 자세한 오류 문구: 실행 기록의 Summary
 
 ## 점검 기준
 
@@ -28,5 +31,6 @@ Digestube·VIZUDEN·포트폴리오 사이트를 매일 09:00(KST)에 점검하�
 
 ```bash
 npm test          # 판정 규칙 테스트
-npm run check     # 실제 점검 (키는 환경변수로)
+npm run check     # 실제 점검 (키는 환경변수로), results.json 생성
+node record.mjs   # results.json 을 docs/history.json 에 합침
 ```

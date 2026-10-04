@@ -1,6 +1,6 @@
 // 매일 도는 점검. 하나라도 실패하면 종료 코드 1 → GitHub 가 실패 메일을 보낸다.
 // 돈이 드는 동작(새 영상 등록, 보고서 생성)은 부르지 않는다. API 키는 출력하지 않는다.
-import { appendFileSync } from "node:fs";
+import { appendFileSync, writeFileSync } from "node:fs";
 import { judgePage, judgeSearch, judgeAsk, judgeKey } from "./lib/judge.mjs";
 
 const DIGESTUBE = "https://digestube.vercel.app";
@@ -74,6 +74,7 @@ for (const [name, run] of checks) {
   console.log(`${r.ok ? "통과" : "실패"}  ${name}  ${r.detail}`);
 }
 
+writeFileSync("results.json", JSON.stringify(rows));
 const failed = rows.filter(r => !r.ok);
 if (process.env.GITHUB_STEP_SUMMARY) {
   const table = ["| 결과 | 항목 | 내용 |", "|---|---|---|",
