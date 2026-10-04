@@ -5,25 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>서비스 상태</title>
 <style>
-:root { --bg:#f7f7f5; --card:#fff; --ink:#111; --muted:#6b6b6b; --line:#e4e4e0; --ok:#2e9e5b; --bad:#d64545; --none:#d9d9d4; }
-@media (prefers-color-scheme: dark) { :root { --bg:#121212; --card:#1c1c1c; --ink:#eee; --muted:#9a9a9a; --line:#2c2c2c; --none:#333; } }
+:root { --bg:#f6f6f3; --card:#fff; --ink:#111; --muted:#6b6b6b; --line:#ebebe7; --ok:#1f9d55; --bad:#e5484d; --none:#ececE8; }
+@media (prefers-color-scheme: dark) { :root { --bg:#111; --card:#1b1b1b; --ink:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --ok:#2fb86a; --bad:#ff5d61; --none:#2b2b2b; } }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", sans-serif; }
 main { max-width:760px; margin:0 auto; padding:32px 16px 48px; }
-h1 { font-size:22px; margin:0 0 4px; }
+h1 { font-size:26px; margin:0 0 4px; font-weight:800; letter-spacing:-0.02em; }
 .sub { color:var(--muted); margin:0 0 20px; font-size:13px; }
-.banner { padding:14px 16px; border-radius:10px; font-weight:600; margin-bottom:20px; color:#fff; }
+.banner { padding:12px 16px; border-radius:10px; font-weight:700; font-size:16px; margin-bottom:8px; color:#fff; }
 .banner.ok { background:var(--ok); } .banner.bad { background:var(--bad); }
-h2 { font-size:14px; color:var(--muted); margin:24px 0 8px; font-weight:600; }
+h2 { font-size:17px; color:var(--ink); margin:28px 0 10px; font-weight:700; letter-spacing:-0.01em; }
 .card { background:var(--card); border:1px solid var(--line); border-radius:10px; }
 .row { display:flex; align-items:center; gap:12px; padding:12px 14px; border-top:1px solid var(--line); }
 .row:first-child { border-top:0; }
 .dot { width:10px; height:10px; border-radius:50%; flex:none; }
-.name { flex:1; min-width:0; }
+.name { flex:1; min-width:0; font-weight:600; }
+.tech { color:var(--muted); font-weight:400; font-size:13px; margin-left:6px; white-space:nowrap; }
 .bars { display:flex; gap:2px; flex:none; }
 .bar { width:5px; height:20px; border-radius:2px; background:var(--none); }
 .ok { background:var(--ok); } .bad { background:var(--bad); }
-.legend { color:var(--muted); font-size:12px; margin-top:16px; }
+.legend { color:var(--muted); font-size:12px; margin-top:20px; }
 @media (max-width:520px) { .bar { width:3px; } }
 </style>
 </head>
@@ -59,7 +60,10 @@ fetch("history.json", { cache: "no-store" }).then(r => r.json()).then(history =>
     for (const it of items) {
       const row = document.createElement("div"); row.className = "row";
       const dot = document.createElement("span"); dot.className = "dot " + (it.ok ? "ok" : "bad");
-      const name = document.createElement("span"); name.className = "name"; name.textContent = it.name;
+      const name = document.createElement("span"); name.className = "name";
+      const m = it.name.match(/^(.*?)\s*\((.+)\)$/); // "검색 (DB·Hugging Face)" → 이름 + 기술
+      name.textContent = m ? m[1] : it.name;
+      if (m) name.append(Object.assign(document.createElement("span"), { className: "tech", textContent: m[2] }));
       const bars = document.createElement("span"); bars.className = "bars";
       for (let i = 0; i < 30 - days.length; i++) bars.append(Object.assign(document.createElement("span"), { className: "bar" }));
       for (const d of days) {
