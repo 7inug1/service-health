@@ -1,0 +1,10 @@
+{
+  "name": "service-health",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check": "node run.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
