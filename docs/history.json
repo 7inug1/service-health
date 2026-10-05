@@ -16,11 +16,11 @@
    },
    {
     "name": "Digestube · 검색 (DB·Hugging Face)",
-    "ok": false
+    "ok": true
    },
    {
     "name": "Digestube · 질문 답변 (Gemini)",
-    "ok": false
+    "ok": true
    },
    {
     "name": "Digestube · Claude 키 (목차)",
