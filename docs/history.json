@@ -1,5 +1,54 @@
 [
  {
+  "date": "2026-10-07",
+  "checks": [
+   {
+    "name": "포트폴리오 · 첫 화면",
+    "ok": true
+   },
+   {
+    "name": "Digestube · 첫 화면",
+    "ok": true
+   },
+   {
+    "name": "Digestube · 맛보기 영상",
+    "ok": true
+   },
+   {
+    "name": "Digestube · 검색 (DB·Hugging Face)",
+    "ok": true
+   },
+   {
+    "name": "Digestube · 질문 답변 (Gemini)",
+    "ok": true
+   },
+   {
+    "name": "Digestube · Claude 키 (목차)",
+    "ok": true
+   },
+   {
+    "name": "VIZUDEN · 첫 화면",
+    "ok": true
+   },
+   {
+    "name": "VIZUDEN · 유형 진단",
+    "ok": true
+   },
+   {
+    "name": "VIZUDEN · 샘플 번역서",
+    "ok": true
+   },
+   {
+    "name": "VIZUDEN · Claude 키 (보고서)",
+    "ok": true
+   },
+   {
+    "name": "VIZUDEN · Tavily 키 (보고서 검색)",
+    "ok": true
+   }
+  ]
+ },
+ {
   "date": "2026-10-06",
   "checks": [
    {
